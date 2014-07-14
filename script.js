@@ -1,6 +1,7 @@
 function Artist(_artistName) {
     this.name = _artistName;
     this.events = [];
+    
     this.getEvents = function () {
         $.getJSON("http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist="
                     + this.name + "&api_key=c7e2dc95d8a8f162ab42118cfb0f30db&format=json",
