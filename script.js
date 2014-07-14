@@ -1,7 +1,7 @@
 function Artist(_artistName) {
     this.name = _artistName;
     this.events = [];
-    
+
     this.getEvents = function () {
         $.getJSON("http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist="
                     + this.name + "&api_key=c7e2dc95d8a8f162ab42118cfb0f30db&format=json",
@@ -33,9 +33,22 @@ function Event(_title, _city, _country, _lat, _long) {
             this.city + this.country, // content
             giscloud.Color.randomHue(70, 50)
         );
-    }
+    };
 
-    this.print = function () {
+    this.toString = function () {
         $("#artistInfo").append("<br/>Event: " + this.title + " | Coo. [lat]" + this.lat + ": [long] " + this.long);
     };
+}
+
+function Map() {
+    this.mapId = 7022;  
+    this.layerId = 28098;
+    this.markers = [];
+
+    this.createMarkers = function(_events) {
+        $.each(_events, function (i, event) {
+            this.markers.push(event.getEventMarker());
+        });
+    };
+
 }
