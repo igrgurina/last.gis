@@ -42,8 +42,9 @@ function Event(_title, _city, _country, _lat, _long) {
 
 function Map() {
     this.mapId = 7022;  
-    this.layerId = 0;//28098;
+    this.layerId = -1;//28098;
     this.markers = [];
+    this.viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
 
     this.createMarkers = function(_events) {
         $.each(_events, function (i, event) {
@@ -55,7 +56,11 @@ function Map() {
 
     };
 
-    this.addMarkersToLayer = function () {
-
+    this.addMarkersToMap = function () {
+       $.each(markers, function (i, marker) {
+           marker.visible(true);
+            // add a marker to the viewer
+            this.viewer.addMarker(marker);
+        });
     };
 }
