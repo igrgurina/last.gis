@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title></title>
+        <title>last.gis</title>
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="jquery.rest.min.js"></script>
         <script type="text/javascript" src="giscloud.api.js"></script>
@@ -12,19 +12,27 @@
                 
                 giscloud.ready(function () {
                     viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
-                    var map = new Map(viewer);
+                    map = new Map(viewer);
                 });
                 
                 $('#search').click(function () {
-                   var artist = new Artist($('#artistName').val());
-                   var events = artist.getEvents();
-                   var markers = map.createMarkersFromEvents(events);
-                   map.addMarkersToMap(markers);
+                    giscloud.ready(function () {
+                        viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
+                        map = new Map(viewer);
+                    
+                        var artist = new Artist($('#artistName').val());
+                        var events = artist.getEvents();
+                        var markers = map.createMarkersFromEvents(events);
+                        map.addMarkersToMap(markers);
+                    });
                 });
             });
         </script>
     </head>
     <body>
-    
+        <input type="text" id="artistName" value="Hardwell" />
+        <button id="search">Search</button>
+        
+        <div id="mapViewer"></div>
     </body>
 </html>
