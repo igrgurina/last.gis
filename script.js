@@ -40,11 +40,11 @@ function Event(_title, _city, _country, _lat, _long) {
     };
 }
 
-function Map() {
+function Map(_viewer) {
     this.mapId = 744548;  
     this.layerId = 745171;
     this.markers = [];
-    this.viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
+    this.viewer = _viewer; //new giscloud.Viewer("mapViewer", mapId, { slider: true });
 
     this.createMarkers = function(_events) {
         $.each(_events, function (i, event) {
