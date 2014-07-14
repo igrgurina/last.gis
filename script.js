@@ -39,26 +39,28 @@ function Artist(_artistName) {
         );
         return e;
     };
-
-    this.doMe = function (_map) {
-        _map.
-    }
 }
 
-function Map(_viewer) {
+function Map(_viewer, _artistName) {
     this.viewer = _viewer;
     this.mapId;
     this.layerId;
     this.tableName;
 
+    this.artistName = _artistName;
+
     //this.markers = [];
-    this.init = function() {
+    this.init = function(events) {
         this.createMap();
         this.createTable();
         this.createLayer();
-
+        
         // prvo trebaš učitat sve evente u featuree
-
+        $.each(events, function(t, _event) {
+            _map.createFeature(this.artistName, _event);
+        })
+        
+        // sad prikaži mapu ko čovjek
         viewer.loadMap(mapId);
     }
 
@@ -204,13 +206,6 @@ function Map(_viewer) {
             // viewer.loadMap(mapId);
         })
     }
-
-
-
-
-
-
-
 
     this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
