@@ -6,6 +6,23 @@
         <script type="text/javascript" src="jquery.rest.min.js"></script>
         <script type="text/javascript" src="giscloud.api.js"></script>
         <script type="text/javascript" src="script.js"></script>
+        <script>
+            $(document).ready(function () {
+                var viewer, map, $ = giscloud.exposeJQuery(), mapId = 744548;
+                
+                giscloud.ready(function () {
+                    viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
+                    var map = new Map(viewer);
+                });
+                
+                $('#search').click(function () {
+                   var artist = new Artist($('#artistName').val());
+                   var events = artist.getEvents();
+                   var markers = map.createMarkersFromEvents(events);
+                   map.addMarkersToMap(markers);
+                });
+            });
+        </script>
     </head>
     <body>
     
