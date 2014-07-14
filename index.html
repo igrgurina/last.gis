@@ -7,31 +7,34 @@
         
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="jquery.rest.min.js"></script>
-		<script type="text/javascript">window.gcForceFlashViewer = false;</script>
         <script type="text/javascript" src="giscloud.api.js"></script>
         <script type="text/javascript" src="script.js"></script>
-        <script>
-            $(document).ready(function () {
-                var viewer, map, $ = giscloud.exposeJQuery(), mapId = 744548;
-                
-                giscloud.ready(function () {
-                    viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
-                    map = new Map(viewer);
-                });
-                
-                $('#search').click(function () {
-                    var artist = new Artist($('#artistName').val());
-                    var events = artist.getEvents();
-                    var markers = map.createMarkersFromEvents(events);
-                    map.addMarkersToMap(markers);
-                });
-            });
+<script>
+$(document).ready(function () {
+	$('#loader').hide(); // hides the loader gif
+	
+	giscloud.apiKey("0637f5945eeb535a3c83fb91a11b4fd7");
+
+	giscloud.ready(function () {
+    	var viewer = new giscloud.Viewer("mapViewer");
+    	var map = new Map(viewer);
+    
+        $('#search').click(function () {
+            var artist = new Artist($('#artistName').val());
+            console.log("Artist name: " + artist.name);
+			
+			map.init(artist); // god-like function - it does everything you've ever wanted, and more.. :)
+        });
+	});
+});
         </script>
     </head>
     <body>
         <input type="text" id="artistName" value="Hardwell" />
         <button id="search">Search</button>
-        
+
+        <img src="ajax-loader.gif" height="20px" width="20px" id="loader" />
+
         <div id="mapViewer"></div>
     </body>
 </html>
