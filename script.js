@@ -1,20 +1,3 @@
-function Artist(_artistName) {
-    this.name = _artistName;
-    this.events = [];
-
-    this.getEvents = function () {
-        $.getJSON("http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist="
-                    + this.name + "&api_key=c7e2dc95d8a8f162ab42118cfb0f30db&format=json",
-            function (data) {
-                $.each(data.events.event, function (i, item) {
-                    this.events.push(new Event(item.title, item.venue.location.city, item.venue.location.country, item.venue.location["get:point"]["geo:lat"], item.venue.location["geo:point"]["geo:long"]));
-                });
-            }
-        );
-        return this.events;
-    };
-}
-
 function Event(_title, _city, _country, _lat, _long) {
     this.title = _title;
     this.city = _city;
@@ -22,7 +5,7 @@ function Event(_title, _city, _country, _lat, _long) {
     this.latitude = _lat;
     this.longitude = _long;
 
-    this.getCoordinates = function () {
+    this.getEventCoordinates = function () {
         return new giscloud.LonLat(this.longitude, this.latitude);
     };
 
@@ -36,27 +19,212 @@ function Event(_title, _city, _country, _lat, _long) {
     };
 
     this.toString = function () {
-        return "<br/>Event: " + this.title + " | Coo. [lat]" + this.lat + ": [long] " + this.long;
+        return "<br/>EVENT: " + this.title + " | Location: " + this.city + ", " + this.country + " (" + this.latitude + ", " + this.longitude + ")";
     };
 }
 
+function Artist(_artistName) {
+    this.name = _artistName;
+    this.e = []; // events
+
+    this.getEvents = function () {
+        $.getJSON("http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist="
+                    + this.name + "&api_key=c7e2dc95d8a8f162ab42118cfb0f30db&format=json",
+            function (data) {
+                $.each(data.events.event, function (i, item) {
+                    console.log(item.title + " | Location: " + item.venue.location.city + ", " + item.venue.location.country + " (" + item.venue.location["geo:point"]["geo:lat"] + ", " + item.venue.location["geo:point"]["geo:long"] + ")");
+                    e.push(new Event(item.title, item.venue.location.city, item.venue.location.country, item.venue.location["geo:point"]["geo:lat"], item.venue.location["geo:point"]["geo:long"]));
+                });
+            }
+        );
+        return e;
+    };
+
+    this.doMe = function (_map) {
+        _map.
+    }
+}
+
 function Map(_viewer) {
-    this.mapId = 744548;
-    this.layerId = 745171;
-    this.markers = [];
     this.viewer = _viewer;
+    this.mapId;
+    this.layerId;
+    this.tableName;
+
+    //this.markers = [];
+    this.init = function() {
+        this.createMap();
+        this.createTable();
+        this.createLayer();
+
+        // prvo trebaš učitat sve evente u featuree
+
+        viewer.loadMap(mapId);
+    }
+
+    this.createMap = function() {
+        var mapName, mapDef;
+
+        mapName = "lastgis";
+        //if(!mapName) return;
+
+        // this is a map definition object for a map
+        // in the popular (Web) Mercator projection
+        mapDef = {
+            name: mapName,
+            units: "meter";
+            proj4: "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs"
+        };
+
+        // create map
+        giscloud.maps.create(mapDef)
+        .fail(function() {
+            console.error("Create map failed");
+        })
+        .done(function (newMapId) {
+            // save the newly created map id
+            mapId = newMapId;
+            console.log("Map " + mapName + " with mapID: " + mapId + " created");
+        });
+    };
+
+    this.createTable = function() {
+        var tableDef;
+
+        tableName = "eventsData";
+        //if(!tableName) return;
+
+        // convert name to alphanumerics, max length 50
+        tableName = tableName.toLowerCase().replace(/(^[^a-z]+)|(\W+)/g, '_').substr(0, 50);
+        // add timestamp to help prevent overlaps with existing tables
+        tableName += $.now();
+
+        // create table definition
+        tableDef = {
+            name: tableName,
+            geometry: "point", // can also be "line", "polygon" etc.
+            srid: 4326, // gps coordinates (WGS84) - nemam pojma šta je ovo, nadam se da radi
+            columns: {
+                "artist" : { "type" : "text" },
+                "eventName" : { "type" : "text" },
+                "eventCity" : { "type" : "text" },
+                "eventCountry" : { "type" : "text" }
+            }
+        }
+
+        // create table
+        giscloud.tables.create(tableDef)
+        .fail(function () {
+            console.error("Create table failed");
+        })
+        .done(function () {
+            console.log("Table " + tableName + " created");
+        });
+    };
+
+
+    this.createLayer = function () {
+        var layerName, layerDef;
+
+        layerName = "eventsLayer";
+        if(!layerName) return;
+
+        // first add the basemap layer
+        layerDef = {
+            map_id: mapId, // use the saved map id here
+            name: "MapQuest OSM",
+            source: {
+                "type": "tile",
+                "src": "mapquest_osm"
+            },
+            type: "tile",
+            x_min: "-20037508.3427892", x_max: "20037508.3427892",
+            y_min: "-20037508.3427892", y_max: "20037508.3427892",
+            visible: true
+        };
+
+        // create basemap layer
+        (new giscloud.Layer(layerDef)).update()
+        .fail(function () {
+            console.error("Create basemap layer failed");
+        })
+        .done(function () {
+            // now add the feature layer
+            layerDef.name = layerName;
+            layerDef.type = "point";
+            layerDef.styles = [{
+                "symbol" : {
+                    "type": "circle",
+                    "color": "250,241,65",
+                    "border": "43,104,217",
+                    "bw": "2",
+                    "size": "14"
+                }
+            }];
+            layerDef.source = {
+                "type": "pg", // postgis table is the source
+                "src" : tableName
+            };
+            (new giscloud.Layer(layerDef)).update()
+            .fail(function () {
+                console.error("Create feature layer failed");
+            })
+            .done(function (newLayerId) {
+                // save the layer id
+                layerId = newLayerId;
+                //console.log()
+            });
+        })
+    }
+
+    this.createFeature = function(_artistName, _event) { // umjesto (_lon, _lat, _artistName, _title, _city, _country)
+        var featureDef, lonLat = _event.getEventCoordinates();
+
+        // check values
+        if(!lonLat.valid()) return;
+
+        // prepare feature definition
+        featureDef = {
+            geometry: new giscloud.geometry.Point(lonLat.lon, lonLat.lat).toOGC(),
+            data: {
+                "artist" : _artistName,
+                "eventName" : _event.title,
+                "eventCity" : _event.city,
+                "eventCountry" : _event.country
+            }
+        }
+
+        // create a new feature
+        giscloud.features.create(layerId, featureDef)
+        .fail(function () {
+            console.error("Create feature failed");
+        })
+        .done(function () {
+            console.log(_event.toString() + " converted to feature");
+            // viewer.loadMap(mapId);
+        })
+    }
+
+
+
+
+
+
+
 
     this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
             this.markers.push(event.getEventMarker());
+            event.toString();
         });
         return this.markers;
     };
 
     this.addMarkersToMap = function (_markers) {
-        $.each(markers, function (i, marker) {
+        $.each(_markers, function (i, marker) {
             marker.visible(true);
             this.viewer.addMarker(marker);
         });
     };
 }
+
