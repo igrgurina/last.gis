@@ -1,40 +1,40 @@
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>last.gis</title>
-        
-        <link rel="stylesheet" type="text/css" href="style.css">
-        
-        <script type="text/javascript" src="jquery.min.js"></script>
-        <script type="text/javascript" src="jquery.rest.min.js"></script>
-        <script type="text/javascript" src="giscloud.api.js"></script>
-        <script type="text/javascript" src="script.js"></script>
-<script>
-$(document).ready(function () {
-	$('#loader').hide(); // hides the loader gif
-	
-	giscloud.apiKey("0637f5945eeb535a3c83fb91a11b4fd7");
+<head>
+	<meta charset="utf-8" />
+	<title>last.gis</title>
 
-	giscloud.ready(function () {
-    	var viewer = new giscloud.Viewer("mapViewer");
-    	var map = new Map(viewer);
-    
-        $('#search').click(function () {
-            var artist = new Artist($('#artistName').val());
-            console.log("Artist name: " + artist.name);
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="jquery.rest.min.js"></script>
+	<script type="text/javascript" src="giscloud.api.js"></script>
+	<script type="text/javascript" src="script.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('#loader').hide(); // hides the loader gif
 			
-			map.init(artist); // god-like function - it does everything you've ever wanted, and more.. :)
-        });
-	});
-});
-        </script>
-    </head>
-    <body>
-        <input type="text" id="artistName" value="Hardwell" />
-        <button id="search">Search</button>
+			giscloud.apiKey("0637f5945eeb535a3c83fb91a11b4fd7");
 
-        <img src="ajax-loader.gif" height="20px" width="20px" id="loader" />
+			giscloud.ready(function () {
+				var viewer = new giscloud.Viewer("mapViewer");
+				var map = new Map(viewer);
 
-        <div id="mapViewer"></div>
-    </body>
+				$('#search').click(function () {
+					var artist = new Artist($('#artistName').val());
+					console.log("Artist name: " + artist.name);
+
+					map.init(artist); // god-like function - it does everything you've ever wanted, and more.. :)
+				});
+			});
+		});
+	</script>
+</head>
+<body>
+	<input type="text" id="artistName" value="Hardwell" />
+	<button id="search">Search</button>
+
+	<img src="ajax-loader.gif" height="20px" width="20px" id="loader" />
+
+	<div id="mapViewer"></div>
+</body>
 </html>
