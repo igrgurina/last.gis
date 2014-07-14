@@ -1,4 +1,4 @@
 last.gis
 ========
 
-A short project I did for GIS Cloud.
+A demo project connecting Last.FM and GIS Cloud.
