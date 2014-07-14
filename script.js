@@ -36,7 +36,7 @@ function Event(_title, _city, _country, _lat, _long) {
     };
 
     this.toString = function () {
-        $("#artistInfo").append("<br/>Event: " + this.title + " | Coo. [lat]" + this.lat + ": [long] " + this.long);
+        return "<br/>Event: " + this.title + " | Coo. [lat]" + this.lat + ": [long] " + this.long;
     };
 }
 
