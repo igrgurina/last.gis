@@ -7,6 +7,7 @@
         
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="jquery.rest.min.js"></script>
+		<script type="text/javascript">window.gcForceFlashViewer = false;</script>
         <script type="text/javascript" src="giscloud.api.js"></script>
         <script type="text/javascript" src="script.js"></script>
         <script>
@@ -19,15 +20,10 @@
                 });
                 
                 $('#search').click(function () {
-                    giscloud.ready(function () {
-                        viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
-                        map = new Map(viewer);
-                    
-                        var artist = new Artist($('#artistName').val());
-                        var events = artist.getEvents();
-                        var markers = map.createMarkersFromEvents(events);
-                        map.addMarkersToMap(markers);
-                    });
+                    var artist = new Artist($('#artistName').val());
+                    var events = artist.getEvents();
+                    var markers = map.createMarkersFromEvents(events);
+                    map.addMarkersToMap(markers);
                 });
             });
         </script>
