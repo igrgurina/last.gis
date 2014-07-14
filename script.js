@@ -41,25 +41,21 @@ function Event(_title, _city, _country, _lat, _long) {
 }
 
 function Map(_viewer) {
-    this.mapId = 744548;  
+    this.mapId = 744548;
     this.layerId = 745171;
     this.markers = [];
-    this.viewer = _viewer; //new giscloud.Viewer("mapViewer", mapId, { slider: true });
+    this.viewer = _viewer;
 
-    this.createMarkers = function(_events) {
+    this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
             this.markers.push(event.getEventMarker());
         });
+        return this.markers;
     };
 
-    this.createLayer = function () {
-
-    };
-
-    this.addMarkersToMap = function () {
-       $.each(markers, function (i, marker) {
-           marker.visible(true);
-            // add a marker to the viewer
+    this.addMarkersToMap = function (_markers) {
+        $.each(markers, function (i, marker) {
+            marker.visible(true);
             this.viewer.addMarker(marker);
         });
     };
