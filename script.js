@@ -1,3 +1,10 @@
+/* 
+redoslijed pozivanja:
+    var map = new Map(viewer);
+    var artist = new Artist(artistName);
+    map.init(artist);
+*/
+
 function Event(_title, _city, _country, _lat, _long) {
     this.title = _title;
     this.city = _city;
@@ -9,6 +16,8 @@ function Event(_title, _city, _country, _lat, _long) {
         return new giscloud.LonLat(this.longitude, this.latitude);
     };
 
+    // mislim da mi ovo više ne treba, al' mi žao obrisat'
+    //(a i nisam siguran da mi ne treba)
     this.getEventMarker = function () {
         return new giscloud.FlagMarker(
             this.getCoordinates().toBounds().center(),
@@ -32,8 +41,9 @@ function Artist(_artistName) {
                     + this.name + "&api_key=c7e2dc95d8a8f162ab42118cfb0f30db&format=json",
             function (data) {
                 $.each(data.events.event, function (i, item) {
-                    console.log(item.title + " | Location: " + item.venue.location.city + ", " + item.venue.location.country + " (" + item.venue.location["geo:point"]["geo:lat"] + ", " + item.venue.location["geo:point"]["geo:long"] + ")");
-                    e.push(new Event(item.title, item.venue.location.city, item.venue.location.country, item.venue.location["geo:point"]["geo:lat"], item.venue.location["geo:point"]["geo:long"]));
+                    pom = new Event(item.title, item.venue.location.city, item.venue.location.country, item.venue.location["geo:point"]["geo:lat"], item.venue.location["geo:point"]["geo:long"]);
+                    console.log(pom.toString());
+                    e.push(pom);
                 });
             }
         );
@@ -205,13 +215,7 @@ function Map(_viewer) {
         })
     }
 
-
-
-
-
-
-
-
+    // ovo tu mi osto više ne treba (valjda)
     this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
             this.markers.push(event.getEventMarker());
@@ -220,6 +224,7 @@ function Map(_viewer) {
         return this.markers;
     };
 
+    // također - budem pobrisao kasnije
     this.addMarkersToMap = function (_markers) {
         $.each(_markers, function (i, marker) {
             marker.visible(true);
