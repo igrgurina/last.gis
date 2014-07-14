@@ -42,7 +42,7 @@ function Event(_title, _city, _country, _lat, _long) {
 
 function Map() {
     this.mapId = 7022;  
-    this.layerId = 28098;
+    this.layerId = 0;//28098;
     this.markers = [];
 
     this.createMarkers = function(_events) {
@@ -51,4 +51,11 @@ function Map() {
         });
     };
 
+    this.createLayer = function () {
+
+    };
+
+    this.addMarkersToLayer = function () {
+
+    };
 }
