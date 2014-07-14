@@ -41,23 +41,21 @@ function Artist(_artistName) {
     };
 }
 
-function Map(_viewer, _artistName) {
+function Map(_viewer) {
     this.viewer = _viewer;
     this.mapId;
     this.layerId;
     this.tableName;
 
-    this.artistName = _artistName;
-
     //this.markers = [];
-    this.init = function(events) {
+    this.init = function(_artist) {
         this.createMap();
         this.createTable();
         this.createLayer();
         
         // prvo trebaš učitat sve evente u featuree
-        $.each(events, function(t, _event) {
-            _map.createFeature(this.artistName, _event);
+        $.each(_artist.e || _artist.getEvents(), function(t, _event) {
+            this.createFeature(_artist.name, _event);
         })
         
         // sad prikaži mapu ko čovjek
@@ -129,7 +127,7 @@ function Map(_viewer, _artistName) {
         var layerName, layerDef;
 
         layerName = "eventsLayer";
-        if(!layerName) return;
+        //if(!layerName) return;
 
         // first add the basemap layer
         layerDef = {
@@ -206,6 +204,13 @@ function Map(_viewer, _artistName) {
             // viewer.loadMap(mapId);
         })
     }
+
+
+
+
+
+
+
 
     this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
