@@ -41,8 +41,8 @@ function Event(_title, _city, _country, _lat, _long) {
 }
 
 function Map() {
-    this.mapId = 7022;  
-    this.layerId = -1;//28098;
+    this.mapId = 744548;  
+    this.layerId = 745171;
     this.markers = [];
     this.viewer = new giscloud.Viewer("mapViewer", mapId, { slider: true });
 
