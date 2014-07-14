@@ -215,7 +215,7 @@ function Map(_viewer) {
         })
     }
 
-    // ovo tu mi osto više ne treba (valjda)
+    // ovo tu mi isto više ne treba (valjda)
     this.createMarkersFromEvents = function (_events) {
         $.each(_events, function (i, event) {
             this.markers.push(event.getEventMarker());
